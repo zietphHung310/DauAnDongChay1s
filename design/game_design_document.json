@@ -1,0 +1,75 @@
+{
+  "title": "H\u1eadu L\u00ea Phi\u00eau L\u01b0u K\u00fd",
+  "language": [
+    "vi"
+  ],
+  "hook": "Xuy\u00ean kh\u00f4ng v\u1ec1 th\u1eddi L\u00ea",
+  "game_overview": "T\u1ec9nh gi\u1ea5c gi\u1eefa kinh th\u00e0nh Th\u0103ng Long n\u0103m 1484, nh\u1eadp vai gi\u1ea3i m\u00e3 nh\u1eefng \u1ea9n khu\u1ea5t v\u00e0 ch\u1ea1m v\u00e0o h\u00e0o kh\u00ed m\u1ed9t th\u1eddi v\u00e0ng son.",
+  "artstyle": "anime",
+  "genre": "visual_novel",
+  "winning_condition": "Ho\u00e0n th\u00e0nh C\u1ea3nh 1 \u0111\u1ebfn C\u1ea3nh 4 (nh\u1ea5n 'M\u1edf n\u1eafp r\u01b0\u01a1ng y ph\u1ee5c ra' chuy\u1ec3n th\u1eb3ng sang C\u1ea3nh 5), l\u1ef1a ch\u1ecdn \u0111\u00fang b\u1ed9 \u00e1o v\u1ea3i gai th\u00f4 m\u00e0u n\u00e2u s\u1ed3ng \u1ed1ng tay h\u1eb9p theo quy ch\u1ebf ph\u1ee5c s\u1eafc th\u1eddi L\u00ea S\u01a1 \u0111\u1ec3 nh\u1eadn +5 T\u00edn nhi\u1ec7m, Th\u1ebb B\u00e0i Gia Nh\u00e2n Ph\u1ee7 Quan, huy hi\u1ec7u 'C\u1ea9m Nang Ph\u1ee5c S\u1eafc \u0110\u1ea1i Vi\u1ec7t' v\u00e0 c\u00e1c danh hi\u1ec7u/v\u1eadt ph\u1ea9m \u1ea9n tr\u01b0\u1edbc khi chuy\u1ec3n sang C\u1ea3nh 6.",
+  "losing_condition": "Kh\u00f4ng c\u00f3 tr\u1ea1ng th\u00e1i thua cu\u1ed9c, thanh m\u00e1u, k\u1ebb \u0111\u1ecbch hay v\u1eadt ph\u1ea9m thu th\u1eadp; tr\u1ea3i nghi\u1ec7m thu\u1ea7n t\u00fay l\u00e0 ti\u1ec3u thuy\u1ebft tr\u1ef1c quan tuy\u1ebfn t\u00ednh.",
+  "player_mode": "single_player",
+  "supported_orientations": [
+    "landscape"
+  ],
+  "input_methods": [
+    "mouse",
+    "touch",
+    "keyboard",
+    "dpad"
+  ],
+  "score_options": {
+    "score_type": "points",
+    "score_order": "higher_is_better"
+  },
+  "low_end_device_support": true,
+  "mobile_playable": true,
+  "tv_playable": true,
+  "content_descriptors": [],
+  "controls": [
+    {
+      "input": "Nh\u1ea5p chu\u1ed9t tr\u00e1i / Ch\u1ea1m m\u00e0n h\u00ecnh",
+      "action": "Chuy\u1ec3n tho\u1ea1i, ch\u1ecdn n\u00fat t\u01b0\u01a1ng t\u00e1c, m\u1edf G\u1ee3i \u00fd / B\u1ed9 s\u01b0u t\u1eadp v\u00e0 \u0111\u00f3ng c\u00e1c b\u1ea3ng th\u00f4ng tin."
+    },
+    {
+      "input": "B\u00e0n ph\u00edm s\u1ed1 (0-9) & Ph\u00edm Enter",
+      "action": "Nh\u1eadp m\u1eadt m\u00e3 4 ch\u1eef s\u1ed1 \u1edf C\u1ea3nh 3 ho\u1eb7c tr\u1ea3 l\u1eddi c\u00e2u h\u1ecfi t\u1ef1 lu\u1eadn ng\u1eafn trong ph\u1ea7n T\u00edch l\u0169y N\u1ebfn Tri Th\u1ee9c."
+    },
+    {
+      "input": "Ph\u00edm Space / Enter / M\u0169i t\u00ean",
+      "action": "Ti\u1ebfp t\u1ee5c d\u00f2ng tho\u1ea1i k\u1ebf ti\u1ebfp ho\u1eb7c \u0111i\u1ec1u h\u01b0\u1edbng v\u00e0 x\u00e1c nh\u1eadn c\u00e1c n\u00fat l\u1ef1a ch\u1ecdn."
+    },
+    {
+      "input": "Ch\u1ea1m tr\u1ef1c ti\u1ebfp tr\u00ean thi\u1ebft b\u1ecb di \u0111\u1ed9ng",
+      "action": "T\u01b0\u01a1ng t\u00e1c c\u1ea3m \u1ee9ng tr\u1ef1c ti\u1ebfp v\u1edbi v\u00f9ng h\u1ed9i tho\u1ea1i, gi\u1ea5y d\u00f3, b\u00e0n ph\u00edm s\u1ed1 v\u00e0 thanh HUD g\u00f3c tr\u00ean b\u00ean ph\u1ea3i."
+    }
+  ],
+  "sections": [
+    {
+      "title": "\u0110\u1ecbnh H\u01b0\u1edbng Thi\u1ebft K\u1ebf (Design Pillars)",
+      "content": "1. Thu\u1ea7n T\u00fay Visual Novel & Gi\u1ea3i M\u00e3 L\u1ecbch S\u1eed: Kh\u00f4ng c\u00f3 y\u1ebfu t\u1ed1 h\u00e0nh \u0111\u1ed9ng chi\u1ebfn \u0111\u1ea5u, thanh m\u00e1u (HP) hay k\u1ebb \u0111\u1ecbch; tr\u1ea3i nghi\u1ec7m t\u1eadp trung v\u00e0o suy lu\u1eadn t\u01b0 li\u1ec7u l\u1ecbch s\u1eed th\u1eddi L\u00ea Th\u00e1nh T\u00f4ng. 2. Hi\u1ec3n Th\u1ecb Nh\u00e2n V\u1eadt Tuy\u1ec7t \u0110\u1ed1i S\u1ea1ch: Trong m\u1ecdi d\u00f2ng tho\u1ea1i, ch\u1ec9 k\u1ebft xu\u1ea5t ch\u00e2n dung c\u1ee7a \u0111\u00fang nh\u00e2n v\u1eadt \u0111ang n\u00f3i v\u00e0 \u1ea9n tri\u1ec7t \u0111\u1ec3 (`display: none`/unmount) c\u00e1c nh\u00e2n v\u1eadt kh\u00e1c. 3. L\u01b0u T\u1ef1 \u0110\u1ed9ng, T\u00edn Nhi\u1ec7m & H\u1ec7 Th\u1ed1ng Danh Hi\u1ec7u: T\u1ef1 \u0111\u1ed9ng l\u01b0u \u0111\u1ea7y \u0111\u1ee7 ti\u1ebfn tr\u00ecnh, N\u1ebfn Tri Th\u1ee9c, T\u00edn Nhi\u1ec7m (c\u00f3 th\u1ec3 \u00e2m), Huy hi\u1ec7u, V\u1eadt ph\u1ea9m v\u00e0 Danh hi\u1ec7u v\u00e0o `localStorage` k\u00e8m t\u00f9y ch\u1ecdn 'X\u00f3a ti\u1ebfn tr\u00ecnh' \u1edf Menu g\u00f3c tr\u00e1i.",
+      "summary": "Nguy\u00ean t\u1eafc c\u1ed1t l\u00f5i gi\u1eef \u0111\u00fang ch\u1ea5t ti\u1ec3u thuy\u1ebft tr\u1ef1c quan gi\u1ea3i m\u00e3 l\u1ecbch s\u1eed Vi\u1ec7t Nam."
+    },
+    {
+      "title": "Danh S\u00e1ch Khe T\u00e0i Nguy\u00ean T\u00f9y Ch\u1ec9nh (Custom Asset Slots)",
+      "content": "1. menu_background, menu_button_sprite, dialogue_box_frame, nen_popup: B\u1ed9 khung giao di\u1ec7n v\u00e0 n\u1ec1n menu/popup. 2. scene1_background, nencanh2, nencanh4_ruong, nencanh5_ruongao: H\u1ec7 th\u1ed1ng \u1ea3nh n\u1ec1n t\u1eeb C\u1ea3nh 1 \u0111\u1ebfn C\u1ea3nh 5. 3. sprite_lien_hoodie, sprite_lien_nausong, sprite_quan_gia_lam, sprite_thiman: Ch\u00e2n dung nh\u00e2n v\u1eadt qua t\u1eebng giai \u0111o\u1ea1n c\u1ea3i trang. 4. giaydo_baive: M\u1ea3nh gi\u1ea5y d\u00f3 c\u1ed5 hi\u1ec3n th\u1ecb b\u00e0i v\u00e8 10 c\u00e2u ch\u1eef \u0111en (#000000) \u1edf C\u1ea3nh 3. 5. icon_goiy, icon_bosuutap, icon_tramcai: Bi\u1ec3u t\u01b0\u1ee3ng HUD G\u1ee3i \u00fd, B\u1ed9 s\u01b0u t\u1eadp v\u00e0 T\u00edn nhi\u1ec7m. 6. huyhieu_biatiensi, huyhieu_giahuanca, huyhieu_phucsac: B\u1ed9 huy hi\u1ec7u l\u1ecbch s\u1eed \u0110\u1ea1i Vi\u1ec7t. 7. item_thebai, item_tramngocbich: V\u1eadt ph\u1ea9m 'Th\u1ebb B\u00e0i Gia Nh\u00e2n Ph\u1ee7 Quan' v\u00e0 b\u1ea3o v\u1eadt \u1ea9n 'Chi\u1ebfc Tr\u00e2m C\u00e0i Ng\u1ecdc B\u00edch'.",
+      "summary": "19 khe t\u00e0i nguy\u00ean h\u00ecnh \u1ea3nh cho n\u1ec1n, nh\u00e2n v\u1eadt, gi\u1ea5y d\u00f3, HUD, v\u1eadt ph\u1ea9m v\u00e0 huy hi\u1ec7u."
+    },
+    {
+      "title": "H\u1ec7 Th\u1ed1ng Danh Hi\u1ec7u ('Danh Hi\u1ec7u') & S\u00e1ch S\u1eafc Phong Trong B\u1ed9 S\u01b0u T\u1eadp",
+      "content": "- Banner Danh Hi\u1ec7u Tr\u01b0\u1ee3t \u0110\u1ec9nh M\u00e0n H\u00ecnh: Khung g\u1ed7 lim t\u1ed1i (`#1c1410`), vi\u1ec1n v\u00e0ng \u0111\u00fap (`#d4af37`) \u0111i\u1ec3m v\u00e2n m\u00e2y L\u00ea S\u01a1, chia 2 bi\u1ebfn th\u1ec3: 'Danh hi\u1ec7u Vinh D\u1ef1' (h\u00e0o quang v\u00e0ng, \u1ea5n v\u00e0ng, ti\u1ebfng chu\u00f4ng \u0111\u1ed3ng ng\u00e2n) v\u00e0 'Danh hi\u1ec7u Ch\u00faa H\u1ec1' (n\u1ec1n \u0111\u1ecf th\u1eabm `#2a1010`, vi\u1ec1n chu sa `#b82929`, l\u1eafc ngang h\u00e0i h\u01b0\u1edbc, m\u1eb7t n\u1ea1 Tu\u1ed3ng v\u00e0 ti\u1ebfng chi\u00eang g\u1ed7 tr\u1ea7m).\n- N\u00e2ng C\u1ea5p B\u1ed9 S\u01b0u T\u1eadp: T\u00e1ch 2 tab ch\u00ednh g\u1ed3m 'Huy hi\u1ec7u & V\u1eadt ph\u1ea9m' v\u00e0 'Danh hi\u1ec7u'. Trong 'Danh hi\u1ec7u' c\u00f3 2 tab ph\u1ee5 l\u00e0 'B\u1ea3ng V\u00e0ng C\u00f4ng Tr\u1ea1ng' v\u00e0 'G\u00f3c T\u1ea5u H\u00e0i Ph\u1ee7 Quan'. M\u1ecdi danh hi\u1ec7u ch\u01b0a \u0111\u1ea1t \u0111\u1ec1u b\u1ecb \u1ea9n ho\u00e0n to\u00e0n; khi \u0111\u1ea1t s\u1ebd hi\u1ec3n th\u1ecb d\u1ea1ng th\u1ebb b\u00e0i g\u1ed7 \u0111\u00f3ng d\u1ea5u vu\u00f4ng \u0111\u1ecf '\u0110\u00c3 \u0110\u1ea0T'.",
+      "summary": "Banner th\u00f4ng b\u00e1o tr\u01b0\u1ee3t t\u1eeb \u0111\u1ec9nh m\u00e0n h\u00ecnh v\u00e0 2 nh\u00e1nh Danh hi\u1ec7u \u1ea9n ho\u00e0n to\u00e0n khi ch\u01b0a m\u1edf kh\u00f3a."
+    },
+    {
+      "title": "Lu\u1ed3ng C\u1ed1t Truy\u1ec7n C\u1ea3nh 1 \u2013 C\u1ea3nh 4",
+      "content": "M\u00e0n H\u00ecnh B\u1eaft \u0110\u1ea7u -> C\u1ea3nh 1 (5 d\u00f2ng tho\u1ea1i) -> C\u1ea3nh 2 (ki\u1ec3m tra A/B/C v\u00e0 ph\u00e1t hi\u1ec7n gi\u1ea5y d\u00f3) -> C\u1ea3nh 3 (4 d\u00f2ng suy ngh\u0129, gi\u1ea3i n\u0103m 1484 nh\u1eadn huy hi\u1ec7u 'Bia Ti\u1ebfn S\u0129 Khoa Nh\u00e2m Tu\u1ea5t') -> C\u1ea3nh 4 (g\u1eb7p Th\u1ecb M\u1eadn nh\u1eadn +2 N\u1ebfn Tri Th\u1ee9c, gi\u1ea3i kh\u00f3a ch\u1eef H\u00e1n Ng\u0169 Th\u01b0\u1eddng `35241` nh\u1eadn huy hi\u1ec7u 'Gia Hu\u1ea5n Ca C\u1ee7a B\u1eadc Nho S\u0129', m\u1edf thanh T\u00edn nhi\u1ec7m `icon_tramcai` v\u00e0 nh\u1ea5n 'M\u1edf n\u1eafp r\u01b0\u01a1ng y ph\u1ee5c ra' v\u00e0o th\u1eb3ng C\u1ea3nh 5).",
+      "summary": "H\u00e0nh tr\u00ecnh t\u1eeb l\u00fac t\u1ec9nh gi\u1ea5c trong kho t\u1ed1i, gi\u1ea3i b\u00e0i v\u00e8 1484 \u0111\u1ebfn m\u1edf kh\u00f3a r\u01b0\u01a1ng Ng\u0169 Th\u01b0\u1eddng 35241."
+    },
+    {
+      "title": "C\u1ea3nh 5: Quy Ch\u1ebf Ph\u1ee5c S\u1eafc \u0110\u1ea1i Vi\u1ec7t, Tr\u1eebng Ph\u1ea1t Gia Ph\u00e1p & V\u1eadt Ph\u1ea9m \u1ea8n",
+      "content": "- B\u1ed1i c\u1ea3nh (`nencanh5_ruongao`): Li\u00ean gi\u1ea5u \u00e1o hoodie xu\u1ed1ng \u0111\u00e1y r\u01b0\u01a1ng v\u00e0 \u0111\u1ee9ng tr\u01b0\u1edbc 3 l\u1ef1a ch\u1ecdn y ph\u1ee5c giao l\u0129nh. H\u1ec7 th\u1ed1ng g\u1ee3i \u00fd C\u1ea3nh 5 g\u1ed3m 6 g\u1ee3i \u00fd \u0111\u1ed3ng gi\u00e1 2 N\u1ebfn Tri Th\u1ee9c/l\u01b0\u1ee3t, k\u00e8m ng\u00e2n h\u00e0ng 6 c\u00e2u h\u1ecfi m\u1edbi v\u1ec1 c\u1ea3i c\u00e1ch L\u00ea Th\u00e1nh T\u00f4ng v\u00e0 qu\u00e2n \u0111i\u1ec1n.\n- Nh\u00e1nh Ch\u1ecdn Sai (\u00c1o l\u1ee5a v\u00e0ng ngh\u1ec7 ho\u1eb7c \u00c1o v\u1ea3i sa \u0111\u1ecf t\u00eda): Qu\u1ea3n gia L\u00e2m qu\u00e1t m\u1eafng ph\u1ea1t tr\u01b0\u1ee3ng, ch\u1edbp d\u00f2ng ch\u1eef \u0111\u1ecf 'Ti\u1ebfng roi v\u00fat l\u00ean trong gi\u00f3' r\u1ed3i hi\u1ec7n m\u00e0n h\u00ecnh \u0111en gi\u1ea3i th\u00edch lu\u1eadt ph\u1ee5c s\u1eafc L\u00ea S\u01a1 (n\u0103m 1466). Nh\u1ea5n 'Quay ng\u01b0\u1ee3c th\u1eddi gian' b\u1ecb tr\u1eeb `-5 T\u00edn nhi\u1ec7m` (cho ph\u00e9p \u00e2m) v\u00e0 th\u1eed l\u1ea1i C\u1ea3nh 5. N\u1ebfu \u0111\u00e3 d\u00f9ng t\u1eeb 3 g\u1ee3i \u00fd tr\u1edf l\u00ean m\u00e0 v\u1eabn ch\u1ecdn sai s\u1ebd m\u1edf kh\u00f3a danh hi\u1ec7u 'Ph\u00e1 gia chi t\u1eed'.\n- Nh\u00e1nh Ch\u1ecdn \u0110\u00fang (\u00c1o v\u1ea3i gai th\u00f4 m\u00e0u n\u00e2u s\u1ed3ng, \u1ed1ng tay h\u1eb9p): Li\u00ean \u0111\u1ed5i sang ch\u00e2n dung `sprite_lien_nausong`, nh\u1eadn `+5 T\u00edn nhi\u1ec7m`, v\u1eadt ph\u1ea9m 'Th\u1ebb B\u00e0i Gia Nh\u00e2n Ph\u1ee7 Quan' (`item_thebai`) v\u00e0 huy hi\u1ec7u 'C\u1ea9m Nang Ph\u1ee5c S\u1eafc \u0110\u1ea1i Vi\u1ec7t' (`huyhieu_phucsac`). N\u1ebfu v\u01b0\u1ee3t C\u1ea3nh 5 v\u1edbi 0 g\u1ee3i \u00fd s\u1ebd nh\u1eadn b\u1ea3o v\u1eadt \u1ea9n 'Chi\u1ebfc Tr\u00e2m C\u00e0i Ng\u1ecdc B\u00edch' (`item_tramngocbich` - mi\u1ec5n nhi\u1ec5m 1 l\u1ea7n tr\u1eeb T\u00edn nhi\u1ec7m k\u1ebf ti\u1ebfp) c\u00f9ng danh hi\u1ec7u 'B\u1eadc Th\u1ea7y Nh\u1eadp Th\u1ebf'; n\u1ebfu sai t\u1eeb 5 l\u1ea7n tr\u1edf l\u00ean m\u1edbi qua s\u1ebd m\u1edf danh hi\u1ec7u 'Vua L\u00ec \u0110\u00f2n \u0110\u1ea5t Th\u0103ng Long'. K\u1ebft th\u00fac b\u1eb1ng n\u00fat 'Kh\u00e9p n\u1eafp r\u01b0\u01a1ng l\u1ea1i, b\u01b0\u1edbc ra b\u00e0n chu\u1ea9n b\u1ecb l\u1ec5 v\u1eadt c\u00f9ng Th\u1ecb M\u1eadn'.",
+      "summary": "L\u1ef1a ch\u1ecdn 3 b\u1ed9 \u00e1o giao l\u0129nh tr\u00ean n\u1ec1n nencanh5_ruongao c\u00f9ng 6 g\u1ee3i \u00fd \u0111\u1ed3ng gi\u00e1 2 N\u1ebfn Tri Th\u1ee9c."
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schema": [
+    {
+      "name": "enableTypewriter",
+      "type": "boolean",
+      "label": "Hiệu ứng chạy chữ (Typewriter)",
+      "default": true
+    },
+    {
+      "name": "typewriterCharsPerSec",
+      "type": "number",
+      "label": "Tốc độ chạy chữ (ký tự/giây)",
+      "default": 55,
+      "min": 20,
+      "max": 120,
+      "step": 5
+    },
+    {
+      "name": "enableDialogueShake",
+      "type": "boolean",
+      "label": "Rung khung thoại kịch tính",
+      "default": true
+    },
+    {
+      "name": "dialogueShakeIntensity",
+      "type": "number",
+      "label": "Cường độ rung khung thoại",
+      "default": 6,
+      "min": 2,
+      "max": 14,
+      "step": 1
+    },
+    {
+      "name": "inactivePortraitBrightness",
+      "type": "number",
+      "label": "Độ sáng nhân vật không thoại",
+      "default": 0.32,
+      "min": 0,
+      "max": 0.7,
+      "step": 0.04
+    },
+    {
+      "name": "ambientDustCount",
+      "type": "number",
+      "label": "Số hạt bụi ánh sáng kho cổ",
+      "default": 26,
+      "min": 0,
+      "max": 60,
+      "step": 2
+    },
+    {
+      "name": "defaultMusicVolume",
+      "type": "number",
+      "label": "Default Music Volume",
+      "default": 0.18,
+      "min": 0,
+      "max": 1,
+      "step": 0.02
+    },
+    {
+      "name": "defaultSfxVolume",
+      "type": "number",
+      "label": "Default SFX Volume",
+      "default": 0.6,
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    }
+  ],
+  "values": {
+    "enableTypewriter": true,
+    "typewriterCharsPerSec": 55,
+    "enableDialogueShake": true,
+    "dialogueShakeIntensity": 6,
+    "inactivePortraitBrightness": 0.32,
+    "ambientDustCount": 26,
+    "defaultMusicVolume": 0.18,
+    "defaultSfxVolume": 0.6
+  }
+}

@@ -137,7 +137,7 @@
     "chroma_key": true,
     "prompt": "A compact ornate Vietnamese Later Le dynasty crimson-and-gold lacquered wooden keepsake box adorned with brass cloud motifs and a rolled golden silk scroll resting beside its lid, crafted as a clean game UI icon with zero text, centered cleanly with generous empty margins around the silhouette. Side-profile view.",
     "actions": null,
-    "resolution": "1K"
+    "resolution": null
   },
   {
     "id": "nen_popup",
@@ -229,7 +229,7 @@
     "art_style": "anime",
     "category": null,
     "media_type": "image_background",
-    "description": "Wide 16:9 anime interior view of an open antique wooden clothes chest inside a Later Le dynasty storage room, revealing three neatly folded traditional Giao Linh robes in turmeric yellow brocade, crimson-purple silk gauze, and rustic dark-brown hemp cloth.",
+    "description": "nencanh5_ruongao",
     "aspect_ratio": "16:9",
     "usage": "Full-screen background image (nencanh5_ruongao) for Scene 5 showing the open wooden chest with 3 folded Giao Linh robes inside.",
     "chroma_key": false,
@@ -243,13 +243,13 @@
     "art_style": "anime",
     "category": null,
     "media_type": "image_other",
-    "description": "Slender waist-up anime visual novel character portrait of Li\u00ean wearing a modest rustic dark-brown Vietnamese Giao Linh cross-collar hemp robe with narrow sleeves and a tied waist sash.",
+    "description": "sprite_lien_nausong",
     "aspect_ratio": "1:1",
     "usage": "Character portrait sprite (sprite_lien_nausong) for Li\u00ean after changing into the rustic brown Giao Linh robe in Scene 5 onwards.",
     "chroma_key": true,
-    "prompt": "A slender, waist-up anime visual novel character portrait of a lively Vietnamese teenage girl with neat shoulder-length dark hair and bright expressive eyes, dressed in a modest historical Vietnamese Later Le dynasty rustic dark-brown coarse hemp cross-collar Giao Linh robe with narrow practical sleeves and a simple cloth waist sash, centered cleanly within the frame with generous empty margins around her silhouette, zero text. Side-profile view. Face right (3 o'clock).",
+    "prompt": "Half-body portrait of a cute girl with a chubby face, big round eyes looking slightly calm, contemplative, and aloof, and black hair coiled into a simple round bun at the back of her neck or crown of her head (chuy ke / topknot bun style) secured with a coarse fabric tie. She is wearing an earthy brown coarse-woven Giao Linh cross-collared robe wrapped from left to right with dark brown collar trim, tied with a sash at the right waist, and fitted/narrowed sleeves practical for physical labor. Semi-realistic folk detective game illustration style blended with watercolor and Chinese ink, isolated on a transparent background, 1:1 aspect ratio.",
     "actions": null,
-    "resolution": "1K"
+    "resolution": null
   },
   {
     "id": "huyhieu_phucsac",
@@ -257,7 +257,7 @@
     "art_style": "anime",
     "category": null,
     "media_type": "image_other",
-    "description": "Ornate antique Vietnamese illustrated handbook emblem depicting Later Le dynasty court and commoner attire regulations with silk scrolls and official seals.",
+    "description": "huyhieu_phucsac",
     "aspect_ratio": "1:1",
     "usage": "Badge image (huyhieu_phucsac) for the 'C\u1ea9m Nang Ph\u1ee5c S\u1eafc \u0110\u1ea1i Vi\u1ec7t' historical badge in Scene 5 and the Collection screen.",
     "chroma_key": true,
@@ -271,7 +271,7 @@
     "art_style": "anime",
     "category": null,
     "media_type": "image_other",
-    "description": "Carved dark ironwood servant waist token plaque from a Later Le dynasty mandarin manor with a braided red-brown cord tassel and brass cloud border.",
+    "description": "item_thebai",
     "aspect_ratio": "1:1",
     "usage": "Item image (item_thebai) for the 'Th\u1ebb B\u00e0i Gia Nh\u00e2n Ph\u1ee7 Quan' pass item unlocked in Scene 5 and shown in the Collection screen.",
     "chroma_key": true,
@@ -285,13 +285,13 @@
     "art_style": "anime",
     "category": null,
     "media_type": "image_other",
-    "description": "Delicate antique Vietnamese emerald-green nephrite jade hairpin carved with lotus petals and subtle gold filigree.",
+    "description": "item_tramngocbich",
     "aspect_ratio": "1:1",
     "usage": "Item image (item_tramngocbich) for the hidden 'Chi\u1ebfc Tr\u00e2m C\u00e0i Ng\u1ecdc B\u00edch' protective shield item unlocked when completing Scene 5 with zero hints.",
     "chroma_key": true,
     "prompt": "An exquisite antique Vietnamese Later Le dynasty translucent emerald-jade hairpin delicately carved with a blooming lotus bud head and fine antique gold filigree collar, glowing softly with protectivejade luster, centered cleanly at an elegant angle with generous empty margins around the silhouette, zero text. Side-profile view.",
     "actions": null,
-    "resolution": "1K"
+    "resolution": null
   },
   {
     "id": "new_asset_1795362152249",

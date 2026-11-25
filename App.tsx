@@ -3837,24 +3837,20 @@ export default function App() {
   const isMusicPlaying =
     gameState.status === 'PLAYING' && !isGameMenuOpen && !isHowToPlayOpen;
 
-  // Offline procedural ambient courtyard notes via gameAudio.playTone
+  // Upbeat & heroic Vietnamese traditional/orchestral BGM via Web Audio
   useEffect(() => {
-    if (!isMusicPlaying || isMusicMuted) return;
-    const scale = [293.66, 349.23, 392.0, 440.0, 523.25, 587.33];
-    const pattern = [0, 2, 3, 4, 3, 1, 2, 5];
-    let step = 0;
-    const id = window.setInterval(() => {
-      const idx = pattern[step % pattern.length] ?? 0;
-      step += 1;
-      const freq = scale[idx] ?? 293.66;
-      gameAudio.playTone({
-        type: 'sine',
-        freq,
-        dur: 0.9,
-        gain: 0.025,
-      });
-    }, 1500);
-    return () => window.clearInterval(id);
+    gameAudio.setHeroicBgmState(
+      isMusicPlaying,
+      isMusicMuted,
+      getConfig('defaultMusicVolume'),
+    );
+    return () => {
+      gameAudio.setHeroicBgmState(
+        false,
+        isMusicMuted,
+        getConfig('defaultMusicVolume'),
+      );
+    };
   }, [isMusicPlaying, isMusicMuted]);
 
   const activeInspectionObj = activeInspectionId
@@ -5275,7 +5271,7 @@ export default function App() {
                       color: THEME.colors.gildedGoldBright,
                     }}
                     className="text-2xl sm:text-3xl font-black mb-3">
-                    Sẵn sàng tiến vào Cảnh 6
+                    Trò chơi vẫn đang trong giai đoạn phát triển, Cảnh 6 sẽ sớm được hoàn thiện
                   </h1>
 
                   <p className="text-stone-200 text-sm sm:text-base leading-relaxed mb-6">
@@ -6439,7 +6435,7 @@ export default function App() {
               <div
                 style={{backgroundColor: 'rgba(26, 17, 13, 0.85)'}}
                 className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-amber-500/40 text-amber-300 text-xs sm:text-sm font-medium mb-3 shadow">
-                <span>Dấu Ấn Dòng Chảy 1</span>
+                <span>Dấu Ấn Dòng Chảy beta</span>
               </div>
 
               <h1

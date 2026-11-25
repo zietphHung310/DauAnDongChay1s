@@ -634,6 +634,15 @@ class GameAudio {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
   private sfxMaster: GainNode | null = null;
+  private bgmMaster: GainNode | null = null;
+  private bgmCompressor: DynamicsCompressorNode | null = null;
+  private bgmNoiseBuffer: AudioBuffer | null = null;
+  private bgmActive = false;
+  private bgmMuted = false;
+  private bgmVolume = 0.18;
+  private bgmTimer: number | null = null;
+  private bgmStep = 0;
+  private bgmNextTime = 0;
   private muted = false; // SFX muted
   private volume = 0.6; // master volume, 0..1
 
@@ -643,6 +652,14 @@ class GameAudio {
         const customEvent = e as CustomEvent<{muted: boolean}>;
         if (typeof customEvent.detail?.muted === 'boolean') {
           this.setMuted(customEvent.detail.muted);
+        }
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (!this.ctx) return;
+        if (document.hidden) {
+          this.stopBgmScheduler();
+        } else if (this.bgmActive && !this.bgmMuted) {
+          this.startBgmScheduler();
         }
       });
     }
@@ -678,6 +695,21 @@ class GameAudio {
     );
     this.sfxMaster.connect(this.master);
     this.master.connect(this.ctx.destination);
+
+    this.bgmMaster = this.ctx.createGain();
+    this.bgmMaster.gain.setValueAtTime(
+      this.bgmActive && !this.bgmMuted ? this.bgmVolume : 0,
+      this.ctx.currentTime,
+    );
+    this.bgmCompressor = this.ctx.createDynamicsCompressor();
+    this.bgmCompressor.threshold.setValueAtTime(-14, this.ctx.currentTime);
+    this.bgmCompressor.knee.setValueAtTime(12, this.ctx.currentTime);
+    this.bgmCompressor.ratio.setValueAtTime(4, this.ctx.currentTime);
+    this.bgmCompressor.attack.setValueAtTime(0.005, this.ctx.currentTime);
+    this.bgmCompressor.release.setValueAtTime(0.15, this.ctx.currentTime);
+    this.bgmCompressor.connect(this.bgmMaster);
+    this.bgmMaster.connect(this.ctx.destination);
+
     this.attachUnlock();
     return this.ctx;
   }
@@ -686,7 +718,15 @@ class GameAudio {
   private attachUnlock() {
     if (typeof window === 'undefined') return;
     const unlock = () => {
-      void this.ctx?.resume().catch(() => {});
+      if (!this.ctx) return;
+      void this.ctx
+        .resume()
+        .then(() => {
+          if (this.bgmActive && !this.bgmMuted && this.bgmTimer === null) {
+            this.startBgmScheduler();
+          }
+        })
+        .catch(() => {});
       window.removeEventListener('pointerdown', unlock);
       window.removeEventListener('keydown', unlock);
       window.removeEventListener('touchstart', unlock);
@@ -842,6 +882,351 @@ class GameAudio {
       dur: o.dur ?? 0.15,
       gain: o.gain,
     });
+  }
+
+  // --- Heroic Vietnamese Historical BGM Synthesizer (~122 BPM) ----------------
+
+  private getBgmNoiseBuffer(ctx: AudioContext): AudioBuffer {
+    if (this.bgmNoiseBuffer && this.bgmNoiseBuffer.sampleRate === ctx.sampleRate) {
+      return this.bgmNoiseBuffer;
+    }
+    const len = Math.floor(ctx.sampleRate * 0.5);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+    this.bgmNoiseBuffer = buf;
+    return buf;
+  }
+
+  private playTrongCai(ctx: AudioContext, out: AudioNode, at: number, accent: boolean) {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(accent ? 132 : 112, at);
+    osc.frequency.exponentialRampToValueAtTime(46, at + 0.17);
+    g.gain.setValueAtTime(0.001, at);
+    g.gain.linearRampToValueAtTime(accent ? 0.52 : 0.36, at + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
+    osc.connect(g);
+    g.connect(out);
+    osc.start(at);
+    osc.stop(at + 0.26);
+
+    const src = ctx.createBufferSource();
+    src.buffer = this.getBgmNoiseBuffer(ctx);
+    const lpf = ctx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.setValueAtTime(accent ? 440 : 320, at);
+    lpf.frequency.exponentialRampToValueAtTime(85, at + 0.09);
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(accent ? 0.22 : 0.14, at);
+    ng.gain.exponentialRampToValueAtTime(0.0001, at + 0.1);
+    src.connect(lpf);
+    lpf.connect(ng);
+    ng.connect(out);
+    src.start(at);
+    src.stop(at + 0.11);
+  }
+
+  private playPhachClick(ctx: AudioContext, out: AudioNode, at: number, high: boolean) {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(high ? 1420 : 1060, at);
+    osc.frequency.exponentialRampToValueAtTime(high ? 920 : 720, at + 0.028);
+    g.gain.setValueAtTime(high ? 0.14 : 0.09, at);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 0.035);
+    osc.connect(g);
+    g.connect(out);
+    osc.start(at);
+    osc.stop(at + 0.045);
+
+    const src = ctx.createBufferSource();
+    src.buffer = this.getBgmNoiseBuffer(ctx);
+    const bpf = ctx.createBiquadFilter();
+    bpf.type = 'bandpass';
+    bpf.frequency.setValueAtTime(high ? 2350 : 1750, at);
+    bpf.Q.setValueAtTime(6, at);
+    const ng = ctx.createGain();
+    ng.gain.setValueAtTime(high ? 0.12 : 0.075, at);
+    ng.gain.exponentialRampToValueAtTime(0.0001, at + 0.032);
+    src.connect(bpf);
+    bpf.connect(ng);
+    ng.connect(out);
+    src.start(at);
+    src.stop(at + 0.04);
+  }
+
+  private playDanTranhPluck(ctx: AudioContext, out: AudioNode, at: number, freq: number, dur: number, vol: number) {
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    osc1.type = 'triangle';
+    osc2.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(freq, at);
+    osc2.frequency.setValueAtTime(freq * 2, at);
+
+    const mix2 = ctx.createGain();
+    mix2.gain.setValueAtTime(0.18, at);
+
+    const lpf = ctx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.setValueAtTime(Math.min(4800, freq * 5.2), at);
+    lpf.frequency.exponentialRampToValueAtTime(Math.max(260, freq * 1.15), at + dur);
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.linearRampToValueAtTime(vol, at + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+
+    osc1.connect(lpf);
+    osc2.connect(mix2);
+    mix2.connect(lpf);
+    lpf.connect(g);
+    g.connect(out);
+
+    osc1.start(at);
+    osc2.start(at);
+    osc1.stop(at + dur + 0.03);
+    osc2.stop(at + dur + 0.03);
+  }
+
+  private playOrchestralBass(ctx: AudioContext, out: AudioNode, at: number, freq: number, dur: number) {
+    const osc = ctx.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(freq, at);
+    const lpf = ctx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.setValueAtTime(340, at);
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.linearRampToValueAtTime(0.26, at + 0.025);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+    osc.connect(lpf);
+    lpf.connect(g);
+    g.connect(out);
+    osc.start(at);
+    osc.stop(at + dur + 0.03);
+  }
+
+  private playSaoTrucLead(
+    ctx: AudioContext,
+    out: AudioNode,
+    at: number,
+    freq: number,
+    dur: number,
+    graceFromFreq?: number,
+  ) {
+    const osc = ctx.createOscillator();
+    const overtone = ctx.createOscillator();
+    osc.type = 'sine';
+    overtone.type = 'sine';
+
+    if (graceFromFreq) {
+      osc.frequency.setValueAtTime(graceFromFreq, at);
+      osc.frequency.exponentialRampToValueAtTime(freq, at + 0.042);
+      overtone.frequency.setValueAtTime(graceFromFreq * 2, at);
+      overtone.frequency.exponentialRampToValueAtTime(freq * 2, at + 0.042);
+    } else {
+      osc.frequency.setValueAtTime(freq, at);
+      overtone.frequency.setValueAtTime(freq * 2, at);
+    }
+
+    const vib = ctx.createOscillator();
+    const vibGain = ctx.createGain();
+    vib.type = 'sine';
+    vib.frequency.setValueAtTime(5.4, at);
+    vibGain.gain.setValueAtTime(0, at);
+    vibGain.gain.linearRampToValueAtTime(freq * 0.011, at + Math.min(0.14, dur * 0.4));
+    vib.connect(vibGain);
+    vibGain.connect(osc.frequency);
+
+    const overGain = ctx.createGain();
+    overGain.gain.setValueAtTime(0.16, at);
+
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.linearRampToValueAtTime(0.24, at + 0.032);
+    g.gain.setValueAtTime(0.2, at + Math.max(0.04, dur * 0.65));
+    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+
+    osc.connect(g);
+    overtone.connect(overGain);
+    overGain.connect(g);
+    g.connect(out);
+
+    const breathSrc = ctx.createBufferSource();
+    breathSrc.buffer = this.getBgmNoiseBuffer(ctx);
+    const bpf = ctx.createBiquadFilter();
+    bpf.type = 'bandpass';
+    bpf.frequency.setValueAtTime(freq * 1.6, at);
+    bpf.Q.setValueAtTime(4.5, at);
+    const bg = ctx.createGain();
+    bg.gain.setValueAtTime(0.0001, at);
+    bg.gain.linearRampToValueAtTime(0.022, at + 0.025);
+    bg.gain.exponentialRampToValueAtTime(0.0001, at + Math.min(dur, 0.18));
+    breathSrc.connect(bpf);
+    bpf.connect(bg);
+    bg.connect(out);
+
+    osc.start(at);
+    overtone.start(at);
+    vib.start(at);
+    breathSrc.start(at);
+    osc.stop(at + dur + 0.03);
+    overtone.stop(at + dur + 0.03);
+    vib.stop(at + dur + 0.03);
+    breathSrc.stop(at + Math.min(dur, 0.2) + 0.02);
+  }
+
+  private scheduleBgmStep(stepIdx: number, at: number) {
+    const ctx = this.ctx;
+    const out = this.bgmCompressor;
+    if (!ctx || !out) return;
+
+    const s = stepIdx % 128; // 8-bar heroic loop at 122 BPM (16th-note grid)
+    const stepDur = 60 / 122 / 4; // ~0.12295s per 16th
+
+    // D-major pentatonic (Hò - Xự - Xang - Xê - Cống: D, E, G, A, B)
+    const D2 = 73.42, G2 = 98.00, A2 = 110.00, B2 = 123.47;
+    const D4 = 293.66, E4 = 329.63, G4 = 392.00, A4 = 440.00, B4 = 493.88;
+    const D5 = 587.33, E5 = 659.25, G5 = 783.99, A5 = 880.00, B5 = 987.77;
+    const D6 = 1174.66;
+
+    const bar = Math.floor(s / 16);
+    const pos = s % 16;
+
+    // 1. Ceremonial Trống Cái (driving festive & heroic rhythm)
+    if (pos === 0 || pos === 6 || pos === 8) {
+      this.playTrongCai(ctx, out, at, pos === 0);
+    } else if ((bar === 3 || bar === 7) && (pos === 12 || pos === 14)) {
+      this.playTrongCai(ctx, out, at, pos === 14);
+    }
+
+    // 2. Crisp Phách / Woodblock syncopation
+    if (pos === 2 || pos === 4 || pos === 10 || pos === 12 || pos === 14) {
+      this.playPhachClick(ctx, out, at, pos === 4 || pos === 12);
+    }
+
+    // 3. Orchestral Bass Root Pulse (beats 1 & 3)
+    const barRoots = [D2, G2, B2, A2, D2, G2, E4 * 0.25, A2];
+    if (pos === 0 || pos === 8) {
+      this.playOrchestralBass(ctx, out, at, barRoots[bar] ?? D2, stepDur * 7.2);
+    }
+
+    // 4. Brisk Đàn Tranh / Đàn Tỳ Bà Pentatonic Arpeggios (every 8th note)
+    const arpByBar: number[][] = [
+      [D4, A4, D5, E5, D5, A4, E5, A4],
+      [G4, D5, G5, A5, G5, D5, B4, D5],
+      [B4, D5, G5, B5, G5, D5, A4, D5],
+      [A4, E5, A5, B5, A5, E5, D5, E5],
+      [D4, A4, D5, G5, A5, G5, D5, A4],
+      [G4, B4, D5, G5, A5, G5, D5, B4],
+      [E4, B4, E5, G5, A5, G5, E5, B4],
+      [A4, D5, E5, A5, B5, A5, E5, D5],
+    ];
+    if (pos % 2 === 0) {
+      const barArp = arpByBar[bar] ?? arpByBar[0];
+      const noteFreq = barArp[pos / 2] ?? D4;
+      this.playDanTranhPluck(ctx, out, at, noteFreq, stepDur * 3.1, 0.17);
+    }
+
+    // 5. Heroic Sáo Trúc (Bamboo Flute) Lead Melody
+    const melodyMap: Record<number, {freq: number; steps: number; grace?: number}> = {
+      0: {freq: D5, steps: 4, grace: B4},
+      4: {freq: A5, steps: 4, grace: G5},
+      8: {freq: G5, steps: 2},
+      10: {freq: A5, steps: 2},
+      12: {freq: B5, steps: 4, grace: A5},
+      16: {freq: D6, steps: 6, grace: B5},
+      22: {freq: B5, steps: 2},
+      24: {freq: A5, steps: 4},
+      28: {freq: G5, steps: 2},
+      30: {freq: E5, steps: 2},
+      32: {freq: D5, steps: 4},
+      36: {freq: E5, steps: 2},
+      38: {freq: G5, steps: 2},
+      40: {freq: A5, steps: 4, grace: G5},
+      44: {freq: B5, steps: 4},
+      48: {freq: A5, steps: 10, grace: G5},
+      60: {freq: G5, steps: 2},
+      62: {freq: A5, steps: 2},
+      64: {freq: D6, steps: 4, grace: B5},
+      68: {freq: B5, steps: 2},
+      70: {freq: A5, steps: 2},
+      72: {freq: G5, steps: 4},
+      76: {freq: A5, steps: 2},
+      78: {freq: B5, steps: 2},
+      80: {freq: G5, steps: 4, grace: E5},
+      84: {freq: E5, steps: 4},
+      88: {freq: D5, steps: 4},
+      92: {freq: E5, steps: 4},
+      96: {freq: G5, steps: 2},
+      98: {freq: A5, steps: 2},
+      100: {freq: B5, steps: 4, grace: A5},
+      104: {freq: D6, steps: 6, grace: B5},
+      110: {freq: B5, steps: 2},
+      112: {freq: A5, steps: 6, grace: G5},
+      118: {freq: G5, steps: 2},
+      120: {freq: E5, steps: 4},
+      124: {freq: D5, steps: 4},
+    };
+    const mel = melodyMap[s];
+    if (mel) {
+      this.playSaoTrucLead(ctx, out, at, mel.freq, stepDur * mel.steps * 0.95, mel.grace);
+    }
+  }
+
+  private startBgmScheduler() {
+    if (typeof window === 'undefined' || this.bgmTimer !== null) return;
+    const ctx = this.ensure();
+    if (!ctx) return;
+
+    this.bgmNextTime = ctx.currentTime + 0.04;
+    const stepDur = 60 / 122 / 4;
+
+    const tick = () => {
+      if (!this.bgmActive || this.bgmMuted || !this.ctx) {
+        this.stopBgmScheduler();
+        return;
+      }
+      if (this.ctx.state !== 'running') {
+        this.bgmNextTime = this.ctx.currentTime + 0.04;
+        return;
+      }
+      while (this.bgmNextTime < this.ctx.currentTime + 0.12) {
+        this.scheduleBgmStep(this.bgmStep, this.bgmNextTime);
+        this.bgmStep = (this.bgmStep + 1) % 128;
+        this.bgmNextTime += stepDur;
+      }
+    };
+
+    this.bgmTimer = window.setInterval(tick, 25);
+  }
+
+  private stopBgmScheduler() {
+    if (this.bgmTimer !== null) {
+      window.clearInterval(this.bgmTimer);
+      this.bgmTimer = null;
+    }
+  }
+
+  setHeroicBgmState(active: boolean, muted: boolean, volume = 0.18) {
+    this.bgmActive = active;
+    this.bgmMuted = muted;
+    this.bgmVolume = Math.max(0, Math.min(1, volume));
+
+    if (!active && !this.ctx) return;
+    const ctx = this.ensure();
+    if (!ctx || !this.bgmMaster) return;
+
+    const target = active && !muted ? this.bgmVolume : 0;
+    this.bgmMaster.gain.setTargetAtTime(target, ctx.currentTime, 0.03);
+
+    if (active && !muted) {
+      this.startBgmScheduler();
+    } else {
+      this.stopBgmScheduler();
+    }
   }
 
   // INSERT_SFX_HERE

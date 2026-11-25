@@ -1682,7 +1682,7 @@
         <div class="vn-overlay-spacer">
           <div class="vn-modal-card" style="border-color:#d4a853;">
             <div class="vn-victory-pill">Hoàn thành Cảnh 5</div>
-            <h1 class="vn-modal-title" style="font-size:clamp(24px,2.5vw,32px);margin-bottom:12px;">Sẵn sàng tiến vào Cảnh 6</h1>
+            <h1 class="vn-modal-title" style="font-size:clamp(24px,2.5vw,32px);margin-bottom:12px;">Trò chơi vẫn đang trong giai đoạn phát triển, Cảnh 6 sẽ sớm được hoàn thiện</h1>
             <p class="vn-victory-desc">Liên đã khoác lên bộ áo Giao Lĩnh nâu sồng đúng chuẩn gia nhân, cất giữ <strong>Thẻ Bài Gia Nhân Phủ Quan</strong> và <strong>Cẩm Nang Phục Sắc Đại Việt</strong>. Hãy đón chờ màn chuẩn bị lễ vật cùng Thị Mận ở Cảnh 6!</p>
             <div class="vn-modal-stack">
               <button id="btn-scene5-home" type="button" class="vn-btn vn-modal-btn primary">
@@ -1989,7 +1989,7 @@
 
       <div class="vn-start-spacer">
         <div class="vn-start-content">
-          <div class="vn-genre-pill">Dấu Ấn Dòng Chảy 1</div>
+          <div class="vn-genre-pill">Dấu Ấn Dòng Chảy beta</div>
           <h1 id="vn-main-title" class="vn-main-title">Hậu Lê Phiêu Lưu Ký </h1>
           <p class="vn-main-hook">Tỉnh giấc giữa kinh thành Thăng Long năm 1484, nhập vai giải mã những ẩn khuất và chạm vào hào khí một thời vàng son.</p>
 
@@ -2391,7 +2391,7 @@
           id: 403,
           speaker: 'Thị Mận',
           spriteId: 'sprite_thiman',
-          action: '[Cúi gằm mặt, hai tay bấu chặt vạt áo nâu bạc màu, giọng run rẩy nức nở]',
+          action: '[Cúi gằm mặt, hai tay bấu chặt vạt áo xanh bạc màu, giọng run rẩy nức nở]',
           dialogue: '"Tỷ mau cởi thứ áo kỳ quặc đó ra đi, Quản gia Lâm mà nhìn thấy lại tưởng tỷ bị yêu ma nhập xác, lôi ra đình làng phạt vạ bây giờ! Sáng nay nhà họ Trương mang khế ước đến đòi siết mảnh ruộng hương hỏa của mẹ em. Thân phận nô tì thấp cổ bé họng như chị em mình, biết lấy gì mà cãi lại nhà giàu có thế lực..."'
         },
         {
@@ -2803,16 +2803,20 @@
       };
 
       /* =====================================================================
-       * 3. PROCEDURAL WEB AUDIO SYNTHESIZER (100% Offline SFX & Ambient Music)
+       * 3. PROCEDURAL WEB AUDIO SYNTHESIZER (100% Offline SFX & Heroic BGM)
        * ===================================================================== */
       var audioEngine = (function () {
         var ctx = null;
         var sfxGain = null;
         var musicGain = null;
+        var musicComp = null;
+        var noiseBuf = null;
         var sfxMuted = false;
         var musicMuted = false;
+        var musicActive = false;
         var musicTimer = null;
         var musicStep = 0;
+        var musicNextTime = 0;
 
         try {
           sfxMuted = window.localStorage.getItem('hlplk_sfx_muted') === '1';
@@ -2827,9 +2831,17 @@
             ctx = new Ctor();
             sfxGain = ctx.createGain();
             musicGain = ctx.createGain();
+            musicComp = ctx.createDynamicsCompressor();
+            musicComp.threshold.setValueAtTime(-14, ctx.currentTime);
+            musicComp.knee.setValueAtTime(12, ctx.currentTime);
+            musicComp.ratio.setValueAtTime(4, ctx.currentTime);
+            musicComp.attack.setValueAtTime(0.005, ctx.currentTime);
+            musicComp.release.setValueAtTime(0.15, ctx.currentTime);
+
             sfxGain.gain.setValueAtTime(sfxMuted ? 0 : 0.6, ctx.currentTime);
-            musicGain.gain.setValueAtTime(musicMuted ? 0 : 0.16, ctx.currentTime);
+            musicGain.gain.setValueAtTime(musicActive && !musicMuted ? 0.18 : 0, ctx.currentTime);
             sfxGain.connect(ctx.destination);
+            musicComp.connect(musicGain);
             musicGain.connect(ctx.destination);
           } catch (e) {
             ctx = null;
@@ -2837,17 +2849,329 @@
           return ctx;
         }
 
+        function getNoiseBuffer(c) {
+          if (noiseBuf && noiseBuf.sampleRate === c.sampleRate) return noiseBuf;
+          var len = Math.floor(c.sampleRate * 0.5);
+          var buf = c.createBuffer(1, len, c.sampleRate);
+          var d = buf.getChannelData(0);
+          for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+          noiseBuf = buf;
+          return buf;
+        }
+
+        function playTrongCai(c, out, at, accent) {
+          var osc = c.createOscillator();
+          var g = c.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(accent ? 132 : 112, at);
+          osc.frequency.exponentialRampToValueAtTime(46, at + 0.17);
+          g.gain.setValueAtTime(0.001, at);
+          g.gain.linearRampToValueAtTime(accent ? 0.52 : 0.36, at + 0.006);
+          g.gain.exponentialRampToValueAtTime(0.0001, at + 0.24);
+          osc.connect(g);
+          g.connect(out);
+          osc.start(at);
+          osc.stop(at + 0.26);
+
+          var src = c.createBufferSource();
+          src.buffer = getNoiseBuffer(c);
+          var lpf = c.createBiquadFilter();
+          lpf.type = 'lowpass';
+          lpf.frequency.setValueAtTime(accent ? 440 : 320, at);
+          lpf.frequency.exponentialRampToValueAtTime(85, at + 0.09);
+          var ng = c.createGain();
+          ng.gain.setValueAtTime(accent ? 0.22 : 0.14, at);
+          ng.gain.exponentialRampToValueAtTime(0.0001, at + 0.1);
+          src.connect(lpf);
+          lpf.connect(ng);
+          ng.connect(out);
+          src.start(at);
+          src.stop(at + 0.11);
+        }
+
+        function playPhachClick(c, out, at, high) {
+          var osc = c.createOscillator();
+          var g = c.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(high ? 1420 : 1060, at);
+          osc.frequency.exponentialRampToValueAtTime(high ? 920 : 720, at + 0.028);
+          g.gain.setValueAtTime(high ? 0.14 : 0.09, at);
+          g.gain.exponentialRampToValueAtTime(0.0001, at + 0.035);
+          osc.connect(g);
+          g.connect(out);
+          osc.start(at);
+          osc.stop(at + 0.045);
+
+          var src = c.createBufferSource();
+          src.buffer = getNoiseBuffer(c);
+          var bpf = c.createBiquadFilter();
+          bpf.type = 'bandpass';
+          bpf.frequency.setValueAtTime(high ? 2350 : 1750, at);
+          bpf.Q.setValueAtTime(6, at);
+          var ng = c.createGain();
+          ng.gain.setValueAtTime(high ? 0.12 : 0.075, at);
+          ng.gain.exponentialRampToValueAtTime(0.0001, at + 0.032);
+          src.connect(bpf);
+          bpf.connect(ng);
+          ng.connect(out);
+          src.start(at);
+          src.stop(at + 0.04);
+        }
+
+        function playDanTranhPluck(c, out, at, freq, dur, vol) {
+          var osc1 = c.createOscillator();
+          var osc2 = c.createOscillator();
+          osc1.type = 'triangle';
+          osc2.type = 'sawtooth';
+          osc1.frequency.setValueAtTime(freq, at);
+          osc2.frequency.setValueAtTime(freq * 2, at);
+
+          var mix2 = c.createGain();
+          mix2.gain.setValueAtTime(0.18, at);
+
+          var lpf = c.createBiquadFilter();
+          lpf.type = 'lowpass';
+          lpf.frequency.setValueAtTime(Math.min(4800, freq * 5.2), at);
+          lpf.frequency.exponentialRampToValueAtTime(Math.max(260, freq * 1.15), at + dur);
+
+          var g = c.createGain();
+          g.gain.setValueAtTime(0.0001, at);
+          g.gain.linearRampToValueAtTime(vol, at + 0.005);
+          g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+
+          osc1.connect(lpf);
+          osc2.connect(mix2);
+          mix2.connect(lpf);
+          lpf.connect(g);
+          g.connect(out);
+
+          osc1.start(at);
+          osc2.start(at);
+          osc1.stop(at + dur + 0.03);
+          osc2.stop(at + dur + 0.03);
+        }
+
+        function playOrchestralBass(c, out, at, freq, dur) {
+          var osc = c.createOscillator();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, at);
+          var lpf = c.createBiquadFilter();
+          lpf.type = 'lowpass';
+          lpf.frequency.setValueAtTime(340, at);
+          var g = c.createGain();
+          g.gain.setValueAtTime(0.0001, at);
+          g.gain.linearRampToValueAtTime(0.26, at + 0.025);
+          g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+          osc.connect(lpf);
+          lpf.connect(g);
+          g.connect(out);
+          osc.start(at);
+          osc.stop(at + dur + 0.03);
+        }
+
+        function playSaoTrucLead(c, out, at, freq, dur, graceFromFreq) {
+          var osc = c.createOscillator();
+          var overtone = c.createOscillator();
+          osc.type = 'sine';
+          overtone.type = 'sine';
+          if (graceFromFreq) {
+            osc.frequency.setValueAtTime(graceFromFreq, at);
+            osc.frequency.exponentialRampToValueAtTime(freq, at + 0.042);
+            overtone.frequency.setValueAtTime(graceFromFreq * 2, at);
+            overtone.frequency.exponentialRampToValueAtTime(freq * 2, at + 0.042);
+          } else {
+            osc.frequency.setValueAtTime(freq, at);
+            overtone.frequency.setValueAtTime(freq * 2, at);
+          }
+
+          var vib = c.createOscillator();
+          var vibGain = c.createGain();
+          vib.type = 'sine';
+          vib.frequency.setValueAtTime(5.4, at);
+          vibGain.gain.setValueAtTime(0, at);
+          vibGain.gain.linearRampToValueAtTime(freq * 0.011, at + Math.min(0.14, dur * 0.4));
+          vib.connect(vibGain);
+          vibGain.connect(osc.frequency);
+
+          var overGain = c.createGain();
+          overGain.gain.setValueAtTime(0.16, at);
+
+          var g = c.createGain();
+          g.gain.setValueAtTime(0.0001, at);
+          g.gain.linearRampToValueAtTime(0.24, at + 0.032);
+          g.gain.setValueAtTime(0.2, at + Math.max(0.04, dur * 0.65));
+          g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+
+          osc.connect(g);
+          overtone.connect(overGain);
+          overGain.connect(g);
+          g.connect(out);
+
+          var breathSrc = c.createBufferSource();
+          breathSrc.buffer = getNoiseBuffer(c);
+          var bpf = c.createBiquadFilter();
+          bpf.type = 'bandpass';
+          bpf.frequency.setValueAtTime(freq * 1.6, at);
+          bpf.Q.setValueAtTime(4.5, at);
+          var bg = c.createGain();
+          bg.gain.setValueAtTime(0.0001, at);
+          bg.gain.linearRampToValueAtTime(0.022, at + 0.025);
+          bg.gain.exponentialRampToValueAtTime(0.0001, at + Math.min(dur, 0.18));
+          breathSrc.connect(bpf);
+          bpf.connect(bg);
+          bg.connect(out);
+
+          osc.start(at);
+          overtone.start(at);
+          vib.start(at);
+          breathSrc.start(at);
+          osc.stop(at + dur + 0.03);
+          overtone.stop(at + dur + 0.03);
+          vib.stop(at + dur + 0.03);
+          breathSrc.stop(at + Math.min(dur, 0.2) + 0.02);
+        }
+
+        function scheduleBgmStep(stepIdx, at) {
+          if (!ctx || !musicComp) return;
+          var s = stepIdx % 128;
+          var stepDur = 60 / 122 / 4;
+
+          var D2 = 73.42, G2 = 98.00, A2 = 110.00, B2 = 123.47;
+          var D4 = 293.66, E4 = 329.63, G4 = 392.00, A4 = 440.00, B4 = 493.88;
+          var D5 = 587.33, E5 = 659.25, G5 = 783.99, A5 = 880.00, B5 = 987.77;
+          var D6 = 1174.66;
+
+          var bar = Math.floor(s / 16);
+          var pos = s % 16;
+
+          if (pos === 0 || pos === 6 || pos === 8) {
+            playTrongCai(ctx, musicComp, at, pos === 0);
+          } else if ((bar === 3 || bar === 7) && (pos === 12 || pos === 14)) {
+            playTrongCai(ctx, musicComp, at, pos === 14);
+          }
+
+          if (pos === 2 || pos === 4 || pos === 10 || pos === 12 || pos === 14) {
+            playPhachClick(ctx, musicComp, at, pos === 4 || pos === 12);
+          }
+
+          var barRoots = [D2, G2, B2, A2, D2, G2, E4 * 0.25, A2];
+          if (pos === 0 || pos === 8) {
+            playOrchestralBass(ctx, musicComp, at, barRoots[bar] || D2, stepDur * 7.2);
+          }
+
+          var arpByBar = [
+            [D4, A4, D5, E5, D5, A4, E5, A4],
+            [G4, D5, G5, A5, G5, D5, B4, D5],
+            [B4, D5, G5, B5, G5, D5, A4, D5],
+            [A4, E5, A5, B5, A5, E5, D5, E5],
+            [D4, A4, D5, G5, A5, G5, D5, A4],
+            [G4, B4, D5, G5, A5, G5, D5, B4],
+            [E4, B4, E5, G5, A5, G5, E5, B4],
+            [A4, D5, E5, A5, B5, A5, E5, D5]
+          ];
+          if (pos % 2 === 0) {
+            var barArp = arpByBar[bar] || arpByBar[0];
+            playDanTranhPluck(ctx, musicComp, at, barArp[pos / 2] || D4, stepDur * 3.1, 0.17);
+          }
+
+          var melodyMap = {
+            0: { freq: D5, steps: 4, grace: B4 },
+            4: { freq: A5, steps: 4, grace: G5 },
+            8: { freq: G5, steps: 2 },
+            10: { freq: A5, steps: 2 },
+            12: { freq: B5, steps: 4, grace: A5 },
+            16: { freq: D6, steps: 6, grace: B5 },
+            22: { freq: B5, steps: 2 },
+            24: { freq: A5, steps: 4 },
+            28: { freq: G5, steps: 2 },
+            30: { freq: E5, steps: 2 },
+            32: { freq: D5, steps: 4 },
+            36: { freq: E5, steps: 2 },
+            38: { freq: G5, steps: 2 },
+            40: { freq: A5, steps: 4, grace: G5 },
+            44: { freq: B5, steps: 4 },
+            48: { freq: A5, steps: 10, grace: G5 },
+            60: { freq: G5, steps: 2 },
+            62: { freq: A5, steps: 2 },
+            64: { freq: D6, steps: 4, grace: B5 },
+            68: { freq: B5, steps: 2 },
+            70: { freq: A5, steps: 2 },
+            72: { freq: G5, steps: 4 },
+            76: { freq: A5, steps: 2 },
+            78: { freq: B5, steps: 2 },
+            80: { freq: G5, steps: 4, grace: E5 },
+            84: { freq: E5, steps: 4 },
+            88: { freq: D5, steps: 4 },
+            92: { freq: E5, steps: 4 },
+            96: { freq: G5, steps: 2 },
+            98: { freq: A5, steps: 2 },
+            100: { freq: B5, steps: 4, grace: A5 },
+            104: { freq: D6, steps: 6, grace: B5 },
+            110: { freq: B5, steps: 2 },
+            112: { freq: A5, steps: 6, grace: G5 },
+            118: { freq: G5, steps: 2 },
+            120: { freq: E5, steps: 4 },
+            124: { freq: D5, steps: 4 }
+          };
+          var mel = melodyMap[s];
+          if (mel) {
+            playSaoTrucLead(ctx, musicComp, at, mel.freq, stepDur * mel.steps * 0.95, mel.grace);
+          }
+        }
+
+        function stopMusicScheduler() {
+          if (musicTimer) {
+            clearInterval(musicTimer);
+            musicTimer = null;
+          }
+        }
+
+        function startMusicScheduler() {
+          if (!canvasCheck.isConnected || musicTimer) return;
+          var c = ensure();
+          if (!c) return;
+          var stepDur = 60 / 122 / 4;
+          musicNextTime = c.currentTime + 0.04;
+          musicTimer = setInterval(function () {
+            if (!canvasCheck.isConnected || !musicActive || musicMuted || document.hidden) {
+              stopMusicScheduler();
+              return;
+            }
+            if (!ctx || ctx.state !== 'running') {
+              if (ctx) musicNextTime = ctx.currentTime + 0.04;
+              return;
+            }
+            while (musicNextTime < ctx.currentTime + 0.12) {
+              scheduleBgmStep(musicStep, musicNextTime);
+              musicStep = (musicStep + 1) % 128;
+              musicNextTime += stepDur;
+            }
+          }, 25);
+        }
+
         function unlock() {
           if (!canvasCheck.isConnected) return;
           var c = ensure();
           if (c && c.state === 'suspended') {
-            c.resume().catch(function () {});
+            c.resume().then(function () {
+              if (musicActive && !musicMuted && !musicTimer) {
+                startMusicScheduler();
+              }
+            }).catch(function () {});
           }
         }
 
         window.addEventListener('pointerdown', unlock, { passive: true });
         window.addEventListener('keydown', unlock, { passive: true });
         window.addEventListener('touchstart', unlock, { passive: true });
+        document.addEventListener('visibilitychange', function () {
+          if (!canvasCheck.isConnected) return;
+          if (document.hidden) {
+            stopMusicScheduler();
+          } else if (musicActive && !musicMuted) {
+            startMusicScheduler();
+          }
+        });
 
         function blip(freq, freqTo, dur, type, gainVal, delay) {
           if (sfxMuted || !canvasCheck.isConnected) return;
@@ -2951,41 +3275,15 @@
             noiseWood(0.05, 0.11);
           },
           setMusicActive: function (active) {
-            if (!active || !canvasCheck.isConnected) {
-              if (musicTimer) {
-                clearInterval(musicTimer);
-                musicTimer = null;
-              }
+            musicActive = Boolean(active && canvasCheck.isConnected);
+            if (ctx && musicGain) {
+              musicGain.gain.setTargetAtTime(musicActive && !musicMuted ? 0.18 : 0, ctx.currentTime, 0.03);
+            }
+            if (!musicActive || musicMuted) {
+              stopMusicScheduler();
               return;
             }
-            if (musicTimer) return;
-            var scale = [293.66, 349.23, 392.0, 440.0, 523.25, 587.33];
-            var pattern = [0, 2, 3, 4, 3, 1, 2, 5];
-            var playNote = function () {
-              if (!canvasCheck.isConnected) {
-                clearInterval(musicTimer);
-                musicTimer = null;
-                return;
-              }
-              if (musicMuted) return;
-              var c = ensure();
-              if (!c || !musicGain || c.state !== 'running') return;
-              var now = c.currentTime;
-              var freq = scale[pattern[musicStep % pattern.length]];
-              musicStep++;
-              var osc = c.createOscillator();
-              var ng = c.createGain();
-              osc.type = 'sine';
-              osc.frequency.setValueAtTime(freq, now);
-              ng.gain.setValueAtTime(0.0001, now);
-              ng.gain.linearRampToValueAtTime(0.14, now + 0.14);
-              ng.gain.exponentialRampToValueAtTime(0.0001, now + 2.1);
-              osc.connect(ng);
-              ng.connect(musicGain);
-              osc.start(now);
-              osc.stop(now + 2.15);
-            };
-            musicTimer = setInterval(playNote, 1450);
+            startMusicScheduler();
           },
           toggleSfx: function () {
             sfxMuted = !sfxMuted;
@@ -2998,7 +3296,12 @@
           toggleMusic: function () {
             musicMuted = !musicMuted;
             if (ctx && musicGain) {
-              musicGain.gain.setValueAtTime(musicMuted ? 0 : 0.16, ctx.currentTime);
+              musicGain.gain.setTargetAtTime(musicActive && !musicMuted ? 0.18 : 0, ctx.currentTime, 0.03);
+            }
+            if (musicActive && !musicMuted) {
+              startMusicScheduler();
+            } else {
+              stopMusicScheduler();
             }
             try { window.localStorage.setItem('hlplk_music_muted', musicMuted ? '1' : '0'); } catch (e) {}
             return musicMuted;

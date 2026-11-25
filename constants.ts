@@ -300,7 +300,7 @@ export const SCENE_4_PART_1_SCRIPT: readonly DialogueLine[] = [
     speaker: 'Thị Mận',
     spriteId: 'sprite_thiman',
     action:
-      '[Cúi gằm mặt, hai tay bấu chặt vạt áo nâu bạc màu, giọng run rẩy nức nở]',
+      '[Cúi gằm mặt, hai tay bấu chặt vạt áo xanh bạc màu, giọng run rẩy nức nở]',
     dialogue:
       '"Tỷ mau cởi thứ áo kỳ quặc đó ra đi, Quản gia Lâm mà nhìn thấy lại tưởng tỷ bị yêu ma nhập xác, lôi ra đình làng phạt vạ bây giờ! Sáng nay nhà họ Trương mang khế ước đến đòi siết mảnh ruộng hương hỏa của mẹ em. Thân phận nô tì thấp cổ bé họng như chị em mình, biết lấy gì mà cãi lại nhà giàu có thế lực..."',
   },
